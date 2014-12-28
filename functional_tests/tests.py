@@ -11,13 +11,35 @@ class NewVisitorTest(LiveServerTestCase):
 
     def tearDown(self):
         self.browser.quit()
+	
+	#omengTest
+    def test_can_log_in_via_admin_site(self):
+        #admin goes to admin page
+        self.browser.get(self.live_server_url + '/admin/')
+        #looks for Django administration
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('Django administration', body.text)
+        #admin types username & password and hits ENTER
+        username_field = self.browser.find_element_by_name('username')
+        username_field.send_keys('admin')
+
+        password_field = self.browser.find_element_by_name('password')
+        password_field.send_keys('admin')
+        password_field.send_keys(Keys.ENTER)	
+		#username and password accepted, and user is taken to admin page
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('Site administration', body.text)
+		#user sees hyperlink for the List app
+        list_links = self.browser.find_elements_by_link_text('Lists')
+        self.assertEquals(len(list_links), 1)
 		
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
-
+	
     def test_can_start_a_list_and_retrieve_it_later(self):
+	
         # Edith has heard about a cool new online to-do app. She goes
         # to check out its homepage
         self.browser.get(self.live_server_url)
