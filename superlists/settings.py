@@ -26,6 +26,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#for restricting access to pages/views
+LOGIN_URL = '/lists/login/'
 
 # Application definition
 
@@ -37,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'lists',
+
 )
 
 MIDDLEWARE_CLASSES = (

@@ -3,16 +3,40 @@
 		<title>To-Do lists</title>
 	</head>
 	<body>
-		<h1>Your To-Do list</h1>
-		<form method="POST" action="/lists/{{ list.id }}/add_item">
-			<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
-			{% csrf_token %}
-		</form>
-		
+		{% if user.is_authenticated %}
+			<h1>Hello {{ user.username}}!</h1>
+			{% else %}
+			<h1>Hello!</h1>
+		{% endif %}
+		<h1>Your To-Do list today - {{ currentdate }} </h1>
+
 		<table id = "id_list_table">
 			{% for item in list.item_set.all %}
-				<tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+				<tr><td>{{ forloop.counter }}: {{ item.text }} - {{ item.created_date }} 
+				{% if item.done == 1 %} - DONE
+				{% elif item.done == 2 %} - CANCELLED
+				{% elif item.done == 0 %}
+				{% endif %}
+				{% if item.done == 0 %}
+				<form name = change_item method = "POST" action="/lists/{{ user.username }}/change_item">
+				<fieldset>
+				<input id="DONE" type="radio" name="done" value="1" onclick="this.form.submit();">DONE
+				<input id="CANCEL" type="radio" name="done" value="2" onclick="this.form.submit();">CANCEL
+				<input type="hidden" name="item_id" value="{{ item.id }}">
+				</fieldset>
+				{% csrf_token %}
+				</form>
+				{% endif %}
+				</td></tr>
 			{% endfor %}
 		</table>
+	<h2>Add another item</h2>
+	<form method="POST" action="/lists/{{ user.username }}/add_item">
+	<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
+	{% csrf_token %}
+	</form>	
+	{% if user.is_authenticated %}
+		<a href="/lists/logout/">Logout</a><br />
+	{% endif %}
 	</body>
 </html>
