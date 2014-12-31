@@ -8,26 +8,33 @@
 			{% else %}
 			<h1>Hello!</h1>
 		{% endif %}
-		<h1>Your To-Do list today - {{ currentdate }} </h1>
+		<h1>Your To-Do list today - {{ currentdate|date:"l, M d, Y" }} </h1>
 
 		<table id = "id_list_table">
-			{% for item in list.item_set.all %}
-				<tr><td>{{ forloop.counter }}: {{ item.text }} - {{ item.created_date }} 
-				{% if item.done == 1 %} - DONE
-				{% elif item.done == 2 %} - CANCELLED
-				{% elif item.done == 0 %}
-				{% endif %}
+			{% for item in list %}
+			<ul>
+				<tr>
 				{% if item.done == 0 %}
-				<form name = change_item method = "POST" action="/lists/{{ user.username }}/change_item">
-				<fieldset>
-				<input id="DONE" type="radio" name="done" value="1" onclick="this.form.submit();">DONE
-				<input id="CANCEL" type="radio" name="done" value="2" onclick="this.form.submit();">CANCEL
-				<input type="hidden" name="item_id" value="{{ item.id }}">
-				</fieldset>
-				{% csrf_token %}
-				</form>
-				{% endif %}
-				</td></tr>
+					<td><li>{{ item.text }}</li></td>
+					<td>
+					<form name = change_item method = "POST" action="/lists/{{ user.username }}/change_item">
+					<fieldset>
+					<input id="DONE" type="radio" name="done" value="1" onclick="this.form.submit();">DONE
+					<input id="CANCEL" type="radio" name="done" value="2" onclick="this.form.submit();">CANCEL
+					<input type="hidden" name="item_id" value="{{ item.id }}">
+					</fieldset>
+					{% csrf_token %}
+					</form>
+					</td>			
+				{% elif item.is_today %}
+						<td><li>{{ item.text }}</li></td>
+						<td>{% if item.done == 1 %} - DONE on {{ item.done_date|date:"M d, Y" }} 
+							{% elif item.done == 2 %} - CANCELLED on {{ item.done_date|date:"M d, Y" }}	
+							{% endif %}
+						</td>		
+				{% endif %}		
+				</tr>	
+			</ul>			
 			{% endfor %}
 		</table>
 	<h2>Add another item</h2>
@@ -36,7 +43,7 @@
 	{% csrf_token %}
 	</form>	
 	{% if user.is_authenticated %}
-		<a href="/lists/logout/">Logout</a><br />
+		<a href="/lists/logout/"><strong>Logout</strong></a><br />
 	{% endif %}
 	</body>
 </html>

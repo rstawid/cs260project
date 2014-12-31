@@ -4,6 +4,7 @@ from lists.models import Item, List
 from django.contrib.auth import authenticate, login, logout
 #to restrict access using decorators
 from django.contrib.auth.decorators import login_required
+from lists.forms import UserForm
 import datetime
 
 # Create your views here.
@@ -13,8 +14,8 @@ def home_page(request):
 def view_list(request, list_id):
 	list_ = List.objects.get(id=list_id)
 	now = datetime.datetime.now()
-	today = now.strftime("%A, %b %d, %Y")
-	return render(request, 'list.html', {'list': list_, 'currentdate':today})
+#	today = now.strftime("%A, %b %d, %Y")
+	return render(request, 'list.html', {'list': list_, 'currentdate':now})
 
 def new_list(request):
 	list_=List.objects.create()
@@ -28,10 +29,10 @@ def add_item(request, username):
 	
 @login_required
 def view_user_list(request, username):
-	now = datetime.datetime.now()
-	list_ = List.objects.get(name=username)
-	today = now.strftime("%A, %b %d, %Y")
-	return render(request, 'list.html', {'list': list_, 'currentdate':today})
+#	list_ = List.objects.get(name=username)
+	item_ = Item.objects.filter(list__name=username)
+#	return render(request, 'list.html', {'list': list_, 'currentdate':datetime.datetime.now()})
+	return render(request, 'list.html', {'list': item_, 'currentdate':datetime.datetime.now()})
 	
 def user_login(request):
 	if request.method == 'POST':
@@ -64,20 +65,30 @@ def change_item(request, username):
 	if request.method == 'POST':
 		itemID = request.POST['item_id']
 		done = request.POST['done']
-		done2 = int(done)
-#		list_ = Item.objects.all()
-		omeng = Item.objects.get(id=itemID)
-		omeng.done=done2
-		omeng.save()
-#		return HttpResponse("SUCCESSFULL! Change status of item: " + omeng.text + " Status: " + done)
+		item = Item.objects.get(id=itemID)
+		item.done=int(done)
+		item.done_date = datetime.datetime.now()
+		item.save()
 		return redirect ('/lists/%s/' % (username,)) 
-#		for item in list_.item_set.all():
-#		for item in list_:
-#			if item.id == itemID:
-#				item.done = done2
-#				item.save()
-#				return HttpResponse("SUCCESSFULL! Change status of item: " + item.text + " Status: " + done2)
-#			else: return HttpResponse("NO ENTRY!!!: Change status of item: " + itemID + " Status: " + done)
-#		return redirect ('/lists/%s/' % (username,)) 
+
 	else:
 		return redirect("/")
+		
+def register(request):
+	registered = False
+	if request.method == 'POST':
+		user_form = UserForm(data=request.POST)
+		if user_form.is_valid():
+			user = user_form.save()
+			user.set_password(user.password)
+			user.save()
+			registered = True
+		else:
+			print(user_form.errors)
+	else:
+		user_form = UserForm()
+		
+	return render(request, 'register.html', {'user_form': user_form, 'registered': registered})
+	
+	
+	return render(request, 'register.html', {'registered': registered})

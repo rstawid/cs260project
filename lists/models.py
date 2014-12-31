@@ -15,8 +15,18 @@ class Item(models.Model):
 	list = models.ForeignKey(List, default=None)
 	created_date = models.DateTimeField(default=datetime.datetime.now)
 	done = models.IntegerField(choices = DONE_CHOICES, default=0)
+	done_date = models.DateTimeField(blank=True)
 	
 	def __str__(self):
 		return self.text
+	
+	@property
+	def is_today(self):
+		now = datetime.datetime.now()
+		today = datetime.datetime.today()
+		if today.day == self.done_date.day:
+			return True	
+		return False
+
 	  
 
