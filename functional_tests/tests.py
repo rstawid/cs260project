@@ -33,7 +33,7 @@ class NewVisitorTest(LiveServerTestCase):
         #user sees hyperlink for the List app
         list_links = self.browser.find_elements_by_link_text('Lists')
         self.assertEquals(len(list_links), 2)
-		
+'''		
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
@@ -111,3 +111,4 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 		
         #Satisfied, they both go back to sleep
+'''

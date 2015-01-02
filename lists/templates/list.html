@@ -5,9 +5,7 @@
 	<body>
 		{% if user.is_authenticated %}
 			<h1>Hello {{ user.username}}!</h1>
-			{% else %}
-			<h1>Hello!</h1>
-		{% endif %}
+		
 		<h1>Your To-Do list today - {{ currentdate|date:"l, M d, Y" }} </h1>
 
 		<table id = "id_list_table">
@@ -37,13 +35,16 @@
 			</ul>			
 			{% endfor %}
 		</table>
-	<h2>Add another item</h2>
-	<form method="POST" action="/lists/{{ user.username }}/add_item">
-	<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
-	{% csrf_token %}
-	</form>	
-	{% if user.is_authenticated %}
+		<h2>Add another item</h2>
+			<form method="POST" action="/lists/{{ user.username }}/add_item">
+				<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
+				{% csrf_token %}
+			</form>	
+		
 		<a href="/lists/logout/"><strong>Logout</strong></a><br />
-	{% endif %}
+		{% else %}
+			<h1>Hello!</br>Log-in <a href="/lists/login/">here</a> to access your to-do list.</h1>
+		{% endif %}
+	
 	</body>
 </html>
