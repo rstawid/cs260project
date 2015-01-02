@@ -4,8 +4,7 @@ from lists.models import Item, List
 from django.contrib.auth import authenticate, login, logout
 #to restrict access using decorators
 from django.contrib.auth.decorators import login_required
-from lists.forms import UserCreationForm, UserForm
-import datetime
+from lists.forms import UserForm
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django import forms
@@ -15,7 +14,7 @@ def view_user_list(request, username):
 	if request.user.is_active and request.user.is_authenticated():
 		if request.user.username == username: 
 			item_ = Item.objects.filter(list__name=username)
-			return render(request, 'list.html', {'list': item_, 'currentdate':datetime.datetime.now()})
+			return render(request, 'list.html', {'list': item_, 'currentdate':timezone.now()})
 		else:
 			return HttpResponse("You don't have access to this page.")
 	else:
@@ -39,7 +38,7 @@ def change_item(request, username):
 			done = request.POST['done']
 			item = Item.objects.get(id=itemID)
 			item.done=int(done)
-			item.done_date = datetime.datetime.now()
+			item.done_date = timezone.now()
 			item.save()
 			return redirect ('/lists/%s/' % (username,)) 
 		else:
@@ -63,7 +62,9 @@ def user_login(request):
 			else:
 				return HttpResponse("Your account is disabled")
 		else:
-			return HttpResponse("Invalid login details supplied. Go back and log-in again.")
+			loginfailed = True
+			return render(request, 'login.html', {'loginfailed': loginfailed})
+#			return HttpResponse("Invalid login details supplied. Go back and log-in again.")
 			
 	else:
 		return render(request, 'login.html', {})
