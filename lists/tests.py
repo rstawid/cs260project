@@ -8,7 +8,8 @@ from lists.models import Item, List
 from lists.views import *
 
 class UserHomePageTest(TestCase):
-
+	fixtures = ['admin_user.json']
+	
 	def test_root_url_resolves_to_user_login_view(self):
 		found = resolve('/')
 		self.assertEqual(found.func, user_login)
@@ -26,6 +27,10 @@ class UserHomePageTest(TestCase):
 		)
 		self.assertTemplateUsed(response, 'register.html')
 	
+	def test_successful_login(self):
+		response = self.client.post('/lists/login/', {'username': 'admin', 'password': 'admin'})
+		expected_html = render_to_string('list.html')
+		self.assertContains(response.content.decode(), expected_html)
 	
 class ListAndItemModelsTest(TestCase):
 	
@@ -124,14 +129,15 @@ class NewItemTest(TestCase):
 		
 		self.assertRedirects(response, '/lists/%s/' % (correct_list.name,))		
 
-'''		
+		
 		
 class ChangeItemList(TestCase):
 	
 	def test_mark_item_as_done(self):
 	
-		list_ = List.objects.create(name='Alice')
+		list_ = List.objects.create(name='alice')
 		item_ = Item.objects.create(text='One item', list=list_)
+		User.Objects.create(username='alice', password='alice')
 		response = self.client.post(
 			'/lists/change_item',
 			data={'item_id': item_.id, 'done': '2'}
@@ -140,7 +146,7 @@ class ChangeItemList(TestCase):
 		self.assertEqual(saved_item.done, 2)
 		
 		
-'''	
+
 	
 '''
 class NewListTest(TestCase):

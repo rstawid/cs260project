@@ -4,9 +4,7 @@
 	</head>
 	<body>
 		{% if user.is_authenticated %}
-			<h1>Hello {{ user.username}}!</h1>
-		
-		<h1>Your To-Do list today - {{ currentdate|date:"l, M d, Y" }} </h1>
+			<h1>Hello {{ user.username}}!<br/>Your To-Do list today - {{ currentdate|date:"l, M d, Y" }} </h1>
 
 		<table id = "id_list_table">
 			{% for item in list %}

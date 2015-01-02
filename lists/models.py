@@ -1,6 +1,5 @@
 from django.db import models
 import datetime
-from datetime import date
 from django.utils import timezone
 
 class List(models.Model):

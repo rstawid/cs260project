@@ -1,7 +1,6 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-#import unittest
 
 class NewVisitorTest(LiveServerTestCase):
     fixtures = ['admin_user.json']
@@ -13,7 +12,6 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 	
-	#omengTest
     def test_can_log_in_via_admin_site(self):
         #admin goes to admin page
         self.browser.get(self.live_server_url + '/admin/')
@@ -30,18 +28,23 @@ class NewVisitorTest(LiveServerTestCase):
         #username and password accepted, and user is taken to admin page
         body = self.browser.find_element_by_tag_name('body')
         self.assertIn('Site administration', body.text)
-'''		
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row.text for row in rows])
+	
 	
     def test_can_start_a_list_and_retrieve_it_later(self):
 	
-        # Edith has heard about a cool new online to-do app. She goes
+        # admin Edith has heard about a cool new online to-do app. She goes
         # to check out its homepage
         self.browser.get(self.live_server_url)
 
+		#user logging in
+        username_field = self.browser.find_element_by_name('username')
+        username_field.send_keys('admin')
+        password_field = self.browser.find_element_by_name('password')
+        password_field.send_keys('admin')
+        password_field.send_keys(Keys.ENTER)
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('Your To-Do list today', body.text)
+		
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
@@ -84,9 +87,19 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
         self.browser = webdriver.Firefox()
 
-        #Francis visits the home page. There is no sign of Edith's
+        #Alice visits the home page. There is no sign of Edith's
         #list
         self.browser.get(self.live_server_url)
+		
+		#user logging in
+        username_field = self.browser.find_element_by_name('username')
+        username_field.send_keys('alice')
+        password_field = self.browser.find_element_by_name('password')
+        password_field.send_keys('alice')
+        password_field.send_keys(Keys.ENTER)
+        body = self.browser.find_element_by_tag_name('body')
+        self.assertIn('Your To-Do list today', body.text)
+		
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertNotIn('make a fly', page_text)
@@ -108,4 +121,3 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 		
         #Satisfied, they both go back to sleep
-'''

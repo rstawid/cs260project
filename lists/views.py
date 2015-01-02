@@ -2,7 +2,6 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from lists.models import Item, List
 from django.contrib.auth import authenticate, login, logout
-#to restrict access using decorators
 from django.contrib.auth.decorators import login_required
 from lists.forms import UserForm
 from django.utils import timezone
@@ -19,6 +18,7 @@ def view_user_list(request, username):
 			return HttpResponse("You don't have access to this page.")
 	else:
 		return redirect ('/')
+		
 
 def add_item(request, username):
 	if request.user.is_active and request.user.username == username:
@@ -64,31 +64,16 @@ def user_login(request):
 		else:
 			loginfailed = True
 			return render(request, 'login.html', {'loginfailed': loginfailed})
-#			return HttpResponse("Invalid login details supplied. Go back and log-in again.")
 			
 	else:
 		return render(request, 'login.html', {})
-
-'''		
-def register(request):
-	registered = False
-	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
-		if form.is_valid():
-			new_user = form.save()
-			registered = True
-	else:
-		form = UserCreationForm()
-		return render(request, 'register.html', {'form': form, 'registered': registered})
-	return render(request, 'register.html', {'registered': registered})
-'''	
+		
+	
 @login_required
 def user_logout(request):
-	#since user is logged-in, just log them out
 	logout(request)
-	
-	#take the user back to homepage
 	return redirect('/lists/login/')
+	
 
 def register(request):
 	registered = False
@@ -106,4 +91,3 @@ def register(request):
 	return render(request, 'register.html', {
         'form': form, 'registered': registered}
 		)
-	

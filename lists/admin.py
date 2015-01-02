@@ -1,7 +1,7 @@
 from django.contrib import admin
 from lists.models import List, Item
 
-#to displaye fields in admin page of Item
+#to display fields in admin page of Item
 class ItemAdmin(admin.ModelAdmin):
 	list_display = ('text', 'list', 'created_date', 'done', 'done_date' )
 
